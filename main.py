@@ -9,18 +9,18 @@ font = pygame.font.Font(pygame.font.get_default_font(), 20)
 screen = pygame.display.set_mode((config.Width, config.Height))
 clock = pygame.time.Clock()
 
-player = pygame.sprite.Group()
-mobs = pygame.sprite.Group()
+Player = pygame.sprite.Group()
+Mobs = pygame.sprite.Group()
 additional = pygame.sprite.Group()
 
 ticks_from_start = 0
 number_mobs = 1
 
 for i in range(number_mobs):
-    mobs.add(mobs)
+    Mobs.add(Mobs)
 
-player_entity = player()
-player.add(player_entity)
+Player_entity = Player
+Player.add(Player_entity)
 
 running = True
 
@@ -30,21 +30,23 @@ while running:
         if event.type == pygame.quit:
             running = False
 
-    player.update()
+    Player.update()
 
-    if player_entity.health == 0:
+    if Player_entity.health == 0:
         running = False
 
-    hits = pygame.sprite.groupcollide(player, mobs, False, True)
+    hits = pygame.sprite.groupcollide(Player, Mobs, False, True)
+    if hits:
+        Player.health -= 1
     ticks_from_start += 1
     screen.fill(config.BLACK)
-    player.draw(screen)
-    mobs.draw(screen)
+    Player.draw(screen)
+    Mobs.draw(screen)
     additional.draw(screen)
 
     if config.DEBUG:
-        for mob in mobs:
-            player_cords = player_entity.rect.center
+        for mob in Mobs:
+            player_cords = Player_entity.rect.center
             mob_cords = mob.rect.center
             pygame.draw.aaline(screen, (255, 0, 0), player_cords, mob_cords)
 
