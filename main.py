@@ -1,5 +1,7 @@
 import pygame
 import config
+import utils
+import random
 
 pygame.init()
 pygame.font.init()
@@ -7,10 +9,17 @@ pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
 screen = pygame.display.set_mode((config.Width, config.Height))
+
 clock = pygame.time.Clock()
 
-Player = pygame.sprite.Group()
+Player = pygame.sprites.Group()
+Player.add(Player())
+
 Mobs = pygame.sprite.Group()
+
+background = pygame.image.load("assets/map.png")
+background = pygame.transform.scale(background, (config.Width, config.Height))
+
 additional = pygame.sprite.Group()
 
 ticks_from_start = 0
@@ -49,6 +58,7 @@ while running:
             player_cords = Player_entity.rect.center
             mob_cords = mob.rect.center
             pygame.draw.aaline(screen, (255, 0, 0), player_cords, mob_cords)
+            pygame.display.flip()
 
     # pygame.init()
     # screen = pygame.display.set_mode((600, 600))

@@ -58,3 +58,35 @@ class Mobs(Sprite):
             self.rect.y += self.speed_y
         else:
             self.kill()
+
+
+class Map(Sprite):
+    def __init__(self, color):
+        super().__init__()
+        self.image = Surface(
+            (config.CELL_SIZE, config.CELL_SIZE)
+        )
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+
+        self.is_wall = False
+        self.name = ""
+
+
+class Platform(MapSprite):
+    x = 0
+    y = 0
+
+    def __init__(self):
+        super().__init__(config.GREEN)
+        self.name = "Ground"
+        self.rect.x = Platform.x
+        self.rect.y = Platform.y
+        Platform.x += config.CELL_SIZE
+        if Platform.x == config.Width:
+            Platform.x = 0
+            Platform.y += config.CELL_SIZE
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, 500)
+        self.rect.y = random.randint(400, 500)
+        self.rect.center = (self.rect.x, self.rect.y)
