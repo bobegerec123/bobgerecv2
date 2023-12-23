@@ -9,27 +9,27 @@ import random
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.health = 5
-        self.image = image.load("assets/bird.png")
+        self.image = image.load("assets/.... .png")
         self.rect = self.image.get_rect()
+        self.rect.get_center =(random.randint(0, config.Width - 25) //2, config.Height - self.rect.height)
         self.speed_y = random.randint(5, 15)
         self.speed_x = random.randint(5, 15)
         self.health = 3
         self.is_jump = False
 
     def update(self):
+        self.speed_x = 0
+        self.speed_y += 1
+
         key = pygame.key.get_pressed()
-        if key[pygame.K_w]:
-            self.rect.y -= self.speed_y
-        if key[pygame.K_s]:
-            self.rect.y += self.speed_y
+        # if key[pygame.K_w]:
+        # self.rect.y -= self.speed_y
+        # if key[pygame.K_s]:
+        # self.rect.y += self.speed_y
         if key[pygame.K_a]:
             self.rect.x -= self.speed_x
         if key[pygame.K_d]:
             self.rect.x += self.speed_x
-        if key[pygame.K_SPACE]:
-            self.speed_y = self.speed_x
-            self.is_jump = True
 
         if self.rect.x < 0:
             self.rect.x = 0
@@ -54,6 +54,3 @@ class Mobs(Sprite):
             self.rect.y += self.speed_y
         else:
             self.kill()
-
-
-# class Platforms(Sprite):
