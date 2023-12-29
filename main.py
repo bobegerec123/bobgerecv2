@@ -1,73 +1,104 @@
-import config
 import pygame
-
-from sprites import Player
+import config
+import utils
+import Sprites.Sprites
+from Sprites.Sprites import Player, Mob, Mushroom
+from Sprites.MapSprite import Ground
 
 pygame.init()
 pygame.font.init()
 
-font = pygame.font.Font(pygame.font.get_default_font(), 200)
+background = pygame.image.load("assets/Map.png")
+background = pygame.transform.scale(background, (config.WIDTH, config.HEIGHT))
 
-screen = pygame.display.set_mode((config.Width, config.Height))
+font = pygame.font.SysFont(pygame.font.get_default_font(), 37)
 
-clock = pygame.time.Clock()
+screen = pygame.display.set_mode(
+    (config.WIDTH, config.HEIGHT)
+)
 
 player = pygame.sprite.Group()
-mobs = pygame.sprite.Group()
-additional = pygame.sprite.Group()
-
-ticks_from_start = 0
-number_mobs = 1
-
-for i in range(number_mobs):
-    mobs.add(mobs)
+player.add(Player())
 
 player_entity = Player()
 player.add(player_entity)
+running = True
 
+__map = []
+
+for i in range(config.CELL_ON_HEIGHT):
+    __map.append(pygame.sprite.Group())
+    for j in range(config.CELL_ON_WIDTH):
+        group = __map[i]
+        group.add(Ground())
+
+
+mobs = pygame.sprite.Group()
+n_mobs = 0
+for i in range(n_mobs):
+    mobs.add(Mob())
+
+mushrooms = pygame.sprite.Group()
+n_mushrooms = 1
+for i in range(n_mushrooms):
+    mushrooms.add(Mushroom())
+
+clock = pygame.time.Clock()
 running = True
 
 while running:
+    player_entity.time_for_mushroom += 1
+    player_entity.points_alive += 1
     clock.tick(config.Framerate)
-    for event in pygame.event.get():
-        if event.type == pygame.quit:
-            running = False
-
-    player.update()
-
+    if player_entity.resist > 0:
+        player_entity.resist -= 1
     if player_entity.health == 0:
         running = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+#    for mob in mobs:
+#        mob.compute_move(player_entity)
+
+    player.update()
+    mobs.update()
+    mushrooms.update()
+
+    if len(mobs) < n_mobs:
+        mobs.add(Mob())
 
     hits = pygame.sprite.groupcollide(player, mobs, False, True)
-    ticks_from_start += 1
-    screen.fill(config.BLACK)
+    if hits and player_entity.resist <= 0:
+        player_entity.health -= 1
+        player_entity.resist += 180
+
+    if player_entity.time_for_mushroom == 360:
+        player_entity.health -= 1
+
+    if player_entity.time_for_mushroom == 180:
+        mushrooms.add(Mushroom())
+
+    hits_for_mushrooms = pygame.sprite.groupcollide(player, mushrooms, False, True)
+
+    if hits_for_mushrooms:
+        player_entity.time_for_mushroom = 0
+        player_entity.points += 1
+
+    screen.blit(background, (0, 0))
+    text = font.render(f"Points:{player_entity.points}", False, (255, 0, 0))
+    screen.blit(text, (0, 0))
+    text = font.render(f"Health:{player_entity.health}", False, (255, 255, 255))
+    screen.blit(text, (60, 30))
+    text = font.render(f"Shield:{player_entity.resist // 60}", False, (0, 0, 0))
+    screen.blit(text, (0, 60))
+    text = font.render(f"Time Before Spawn:{player_entity.points_alive // 60}", False, (0, 0, 255))
+    screen.blit(text, (60, 90))
+    text = font.render(f"Time Before Mushroom spawned:{player_entity.time_for_mushroom // 60}", False, (255, 255, 255))
+    screen.blit(text, (0, 120))
     player.draw(screen)
     mobs.draw(screen)
-    additional.draw(screen)
-
-    if config.DEBUG:
-        for mob in mobs:
-            player_cords = player_entity.rect.center
-            mob_cords = mob.rect.center
-            pygame.draw.aaline(screen, (255, 0, 0), player_cords, mob_cords)
-            pygame.display.flip()
-
-    # pygame.init()
-    # screen = pygame.display.set_mode((600, 600))
-    # running = True
-    #
-    # while running:
-    #    for event in pygame.event.get():
-    #        if event.type == pygame.QUIT:
-    #            running = False
-    #
-    #    screen.fill((0, 0, 0))
-    #    pygame.draw.rect(screen, (0, 0, 255), (215, 250, 200, 200), 5)
-    #    pygame.draw.polygon(screen, (0, 0, 255), [
-    #        (160, 250), (320, 70), (330, 80), (460, 250)
-    #    ], 5)
-    #    pygame.draw.rect(screen, (0, 0, 255), (320, 310, 50, 50), 5)
-    #    pygame.draw.rect(screen, (0, 0, 255), (250, 300, 50, 130))
-    #    pygame.display.flip()
+    mushrooms.draw(screen)
     pygame.display.flip()
+
 pygame.quit()
+print("АЛО ГРИБ, АЛО!")
