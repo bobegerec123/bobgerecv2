@@ -12,9 +12,12 @@ class Player(Sprite):
         self.time_for_mushroom = 0
         self.points_alive = 0
         self.index = 0
+        self.tip_2 = "after getting 5 coins, u can convert it into 1 health"
+        self.tip_1 = "if coin staying at ground for 6 sec u will get hit"
 
         self.images = [
-            image.load("assets/bird.png")
+            image.load("assets/chara3.png"),
+            image.load("assets/chara.back.png")
         ]
         self.images = list(map(
             lambda x: transform.scale(x, (64, 64)),
@@ -56,7 +59,10 @@ class Player(Sprite):
         if key[pygame.K_SPACE] and self.is_jump == False:
             self.speed_y = -17
             self.is_jump = True
-
+        if self.speed_y >= 0:
+            self.index = 0
+        if self.speed_y < 0:
+            self.index = 1
         self.rect.x += self.speed_x
         if self.rect.x > config.WIDTH - self.rect.width or self.rect.x < 0:
             self.rect.x -= self.speed_x
@@ -78,7 +84,7 @@ class Player(Sprite):
         angle = 45 * move
         # image = transform.rotate(self.images[self.index], angle)
         image = self.images[self.index]
-        if move < 0:
+        if move > 0:
             image = transform.flip(image, 1, 0)
         self.image = image
 
