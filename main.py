@@ -11,7 +11,7 @@ pygame.font.init()
 background = pygame.image.load("assets/Map.png")
 background = pygame.transform.scale(background, (config.WIDTH, config.HEIGHT))
 
-font = pygame.font.SysFont(pygame.font.get_default_font(), 37)
+font = pygame.font.SysFont(pygame.font.get_default_font(), 25)
 
 screen = pygame.display.set_mode(
     (config.WIDTH, config.HEIGHT)
@@ -74,6 +74,7 @@ while running:
 
     if player_entity.time_for_mushroom == 360:
         player_entity.health -= 1
+        player_entity.time_for_mushroom = 0
 
     if player_entity.time_for_mushroom == 180:
         mushrooms.add(Mushroom())
@@ -88,13 +89,17 @@ while running:
     text = font.render(f"Points:{player_entity.points}", False, (255, 0, 0))
     screen.blit(text, (0, 0))
     text = font.render(f"Health:{player_entity.health}", False, (255, 255, 255))
-    screen.blit(text, (60, 30))
+    screen.blit(text, (0, 30))
     text = font.render(f"Shield:{player_entity.resist // 60}", False, (0, 0, 0))
     screen.blit(text, (0, 60))
     text = font.render(f"Time Before Spawn:{player_entity.points_alive // 60}", False, (0, 0, 255))
     screen.blit(text, (60, 90))
     text = font.render(f"Time Before Mushroom spawned:{player_entity.time_for_mushroom // 60}", False, (255, 255, 255))
     screen.blit(text, (0, 120))
+    text = font.render(f"Tip:{player_entity.tip_1}", False, (0, 0, 0))
+    screen.blit(text, (200,  0))
+    text = font.render(f"Tip number 2:{player_entity.tip_2}", False, (0, 0, 0))
+    screen.blit(text, (150, 25))
     player.draw(screen)
     mobs.draw(screen)
     mushrooms.draw(screen)
